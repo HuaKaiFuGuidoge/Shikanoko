@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>しかのこのこのここしたんたん</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+            overflow: hidden;
+        }
+        #video {
+            transform-origin: center center;
+            transform: rotate(0deg);
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <video id="video" preload="auto" autoplay loop muted playsinline>
+        <source src="video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <audio id="audio" src="audio.mp3" autoplay loop></audio>
+
+    <script src="https://cdn.staticfile.org/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <script>
+        const messages = {
+            "en-US": {
+                title: "Hint",
+                text: "Click OK to confirm playback, and click the screen to rotate the video.",
+                button: "OK"
+            },
+            "zh-CN": {
+                title: "提示",
+                text: "点击“确定”确认播放，然后点击屏幕旋转视频。",
+                button: "确定"
+            },
+            "zh-TW": {
+                title: "提示",
+                text: "點擊「確定」確認播放，然後點擊螢幕旋轉影片。",
+                button: "確定"
+            },
+            "ja": {
+                title: "ヒント",
+                text: "再生を確認するには「OK」をクリックし、画面をクリックして動画を回転させてください。",
+                button: "OK"
+            },
+            "ko": {
+                title: "힌트",
+                text: "재생을 확인하려면 '확인'을 클릭하고, 화면을 클릭하여 비디오를 회전하세요.",
+                button: "확인"
+            },
+            "de": {
+                title: "Hinweis",
+                text: "Klicken Sie auf 'OK', um die Wiedergabe zu bestätigen, und klicken Sie auf den Bildschirm, um das Video zu drehen.",
+                button: "OK"
+            },
+            "ru": {
+                title: "Совет",
+                text: "Нажмите 'ОК', чтобы подтвердить воспроизведение, и нажмите на экран, чтобы повернуть видео.",
+                button: "ОК"
+            },
+            "ar": {
+                title: "تلميح",
+                text: "انقر على 'موافق' لتأكيد التشغيل، وانقر على الشاشة لتدوير الفيديو.",
+                button: "موافق"
+            },
+            "es": {
+                title: "Sugerencia",
+                text: "Haz clic en 'OK' para confirmar la reproducción y haz clic en la pantalla para girar el video.",
+                button: "OK"
+            },
+            "hi": {
+                title: "संकेत",
+                text: "प्ले बैक की पुष्टि करने के लिए 'ठीक है' पर क्लिक करें, और वीडियो घुमाने के लिए स्क्रीन पर क्लिक करें।",
+                button: "ठीक है"
+            },
+            "bn": {
+                title: "সতর্কতা",
+                text: "'ঠিক আছে' ক্লিক করে প্লেব্যাক নিশ্চিত করুন এবং ভিডিও ঘোরানোর জন্য পর্দায় ক্লিক করুন।",
+                button: "ঠিক আছে"
+            },
+            "pt": {
+                title: "Dica",
+                text: "Clique em 'OK' para confirmar a reprodução e clique na tela para girar o vídeo.",
+                button: "OK"
+            }
+        };
+
+        const userLanguage = navigator.language || navigator.userLanguage;
+        const message = messages[userLanguage] || messages["en-US"];
+
+        swal({
+            title: message.title,
+            text: message.text,
+            icon: "info",
+            button: message.button
+        }).then(() => {
+            let audio = document.getElementById('audio');
+            if (audio.paused) {
+                audio.play();
+            }
+        });
+
+        let rotation = 0;
+        const videoElement = document.getElementById('video');
+
+        function updateVideoSize() {
+            const videoRatio = videoElement.videoWidth / videoElement.videoHeight;
+            const windowRatio = window.innerWidth / window.innerHeight;
+
+            if (rotation % 180 === 0) {
+                if (videoRatio > windowRatio) {
+                    videoElement.style.width = "100vw";
+                    videoElement.style.height = "auto";
+                } else {
+                    videoElement.style.width = "auto";
+                    videoElement.style.height = "100vh";
+                }
+            } else {
+                if (videoRatio > windowRatio) {
+                    videoElement.style.width = "auto";
+                    videoElement.style.height = "100vw";
+                } else {
+                    videoElement.style.width = "100vh";
+                    videoElement.style.height = "auto";
+                }
+            }
+        }
+
+        videoElement.addEventListener('loadedmetadata', updateVideoSize);
+
+        videoElement.addEventListener('click', function() {
+            rotation = (rotation + 90) % 360;
+            videoElement.style.transform = `rotate(${rotation}deg)`;
+            updateVideoSize();
+        });
+
+        videoElement.muted = true;
+        videoElement.play();
+
+        updateVideoSize();
+
+        window.addEventListener('resize', updateVideoSize);
+    </script>
+</body>
+</html>
